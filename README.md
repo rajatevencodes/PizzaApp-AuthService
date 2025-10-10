@@ -1,1 +1,0 @@
-A production-grade Node.js server template featuring Git Hooks (Husky), Node Version Manager (NVM) setup, Docker configurations for both development and production, ESLint and Prettier integration, centralized configuration management, structured logging with Winston, comprehensive testing with Jest, and global error handling with enhanced observability.

@@ -1,9 +1,9 @@
 services:
-  nodeservertemplate:
+  auth-service:
     build:
       context: ../../
       dockerfile: docker/development/Dockerfile
-    image: nodeservertemplate:dev
+    image: auth-service:dev
     stdin_open: true
     tty: true
     ports:
