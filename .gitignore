@@ -1,0 +1,72 @@
+# Node.js & TypeScript
+node_modules/
+dist/
+build/
+coverage/
+.env
+.env.local
+.env.*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+.pnpm-debug.log*
+*.tsbuildinfo
+
+# IDEs and editors
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Test output
+jest-test-results.json
+
+# Misc
+*.tgz
+*.gz
+
+# Express specific
+public/uploads/
+tmp/
+
+# TypeScript
+*.d.ts
+out/
+tsconfig.tsbuildinfo
+
+# Optional: Ignore compiled assets
+# *.js  # Commented out to allow jest.config.js
+*.js.map
+
+# Optional: Ignore documentation builds
+docs/
+
+# Optional: Ignore SQLite database files
+*.sqlite
+*.db
+
+# Optional: Ignore Prisma files
+prisma/migrations/
+
+# Optional: Ignore PM2 logs
+.pm2/
+
+# Optional: Ignore Sentry CLI files
+.sentrycli/
+
+# Optional: Ignore Mac system files
+.AppleDouble
+.LSOverride
+
+# Optional: Ignore VSCode settings
+.history/
