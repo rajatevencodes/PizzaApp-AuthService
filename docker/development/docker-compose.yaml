@@ -15,3 +15,20 @@ services:
       - ../../.env
     environment:
       - NODE_ENV=development
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:latest
+    container_name: pizza-auth-service-volume-container
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+    ports:
+      - "5432:5432"
+    volumes:
+      - pizza-auth-service-volume:/var/lib/postgresql/data
+
+volumes:
+  pizza-auth-service-volume:
+    external: true

@@ -1,7 +1,8 @@
 import request from "supertest";
 import app from "./src/app";
 
-describe("simple test case", () => {
+// * Skip this test case as it is not related to the auth service
+describe.skip("simple test case", () => {
   it("should pass a basic math check", () => {
     expect(1 + 10).toBe(11);
   });
