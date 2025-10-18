@@ -1,6 +1,7 @@
 import express from "express";
 import { Request, Response, NextFunction } from "express";
 import createHttpError from "http-errors";
+import prisma from "../db";
 
 const authRouter = express.Router();
 
@@ -20,26 +21,43 @@ authRouter.post(
     */
 
     try {
+      // 1
       const { name, email, password } = req.body;
 
-      // Validate required fields
+      // 2s
       if ([name, email, password].some((field) => field?.trim() === "")) {
         throw createHttpError(400, "All fields are required");
       }
 
-      // TODO: Add email format validation
-      // TODO: Check if user already exists
-      // TODO: Hash password
-      // TODO: Save to database
-      // TODO: Generate JWT token
-      // TODO: Set cookie
+      // 3
+      const existingUser = await prisma.user.findUnique({
+        where: { email },
+      });
 
-      // For now, return success
+      if (existingUser) {
+        throw createHttpError(409, "User with this email already exists");
+      }
+
+      // 5
+      const newUser = await prisma.user.create({
+        // Store this `data` in the database
+        data: {
+          name,
+          email,
+          password, // TODO : Hash the password
+          role: "user",
+        },
+        // Returns this `select` object to the newUser variable
+        select: {
+          id: true,
+          name: true,
+          email: true,
+        },
+      });
+
       res.status(201).json({
         success: true,
-        data: {
-          user: { name, email },
-        },
+        user: newUser,
         message: "User registered successfully",
       });
     } catch (error: unknown) {

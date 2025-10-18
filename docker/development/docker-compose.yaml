@@ -12,18 +12,17 @@ services:
       - ../../:/usr/src/app
       - /usr/src/app/node_modules
     env_file:
-      - ../../.env
-    environment:
-      - NODE_ENV=development
+      - ../../.env.dev
     depends_on:
       - postgres
-
+    command: ["sh", "-c", "sleep 5 && npx prisma db push && npm run dev"]
   postgres:
     image: postgres:latest
     container_name: pizza-auth-service-volume-container
     environment:
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=auth_service
     ports:
       - "5432:5432"
     volumes:

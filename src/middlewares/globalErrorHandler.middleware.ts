@@ -15,7 +15,6 @@ export const globalErrorHandler = (
 
   const statusCode = err.status || 500;
   const isProduction = appConfig.NODE_ENV === "production";
-  console.log(appConfig.NODE_ENV);
   const message = isProduction ? `An unexpected error occurred.` : err.message;
 
   logger.error(err.message, {
