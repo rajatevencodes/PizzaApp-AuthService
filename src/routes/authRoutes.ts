@@ -12,7 +12,7 @@ authRouter.post(
     /*
     Logic Flow:
     1. Extract user details from the request body
-    2. Validate required fields and email format
+    2. Validate required fields , email format and password strength
     3. Check if user already exists in database
     4. Hash the password
     5. Save user to database
@@ -24,9 +24,30 @@ authRouter.post(
       // 1
       const { name, email, password } = req.body;
 
-      // 2s
-      if ([name, email, password].some((field) => field?.trim() === "")) {
+      // 2.0 - Validate required fields
+      if (
+        !name ||
+        !email ||
+        !password ||
+        name.trim() === "" ||
+        email.trim() === "" ||
+        password.trim() === ""
+      ) {
         throw createHttpError(400, "All fields are required");
+      }
+
+      // 2.1 - Validate email format
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        throw createHttpError(400, "Please provide a valid email address");
+      }
+
+      // 2.2 - Validate password strength
+      if (password.length < 6) {
+        throw createHttpError(
+          400,
+          "Password must be at least 6 characters long",
+        );
       }
 
       // 3
@@ -47,7 +68,7 @@ authRouter.post(
           password, // TODO : Hash the password
           role: "user",
         },
-        // Returns this `select` object to the newUser variable
+        // `select` object is returned to the `newUser` variable
         select: {
           id: true,
           name: true,
