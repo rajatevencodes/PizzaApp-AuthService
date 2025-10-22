@@ -2,6 +2,10 @@ import express from "express";
 import { Request, Response, NextFunction } from "express";
 import createHttpError from "http-errors";
 import prisma from "../db";
+import logger from "../config/loggerConfig";
+import { isValidEmail, isValidPassword, validateRequiredFields } from "../utils";
+import { Roles } from "../constants";
+import bcrypt from "bcrypt";
 
 const authRouter = express.Router();
 
@@ -24,30 +28,28 @@ authRouter.post(
       // 1
       const { name, email, password } = req.body;
 
+      logger.info(`Register attempt for email: ${email}`);
+
       // 2.0 - Validate required fields
-      if (
-        !name ||
-        !email ||
-        !password ||
-        name.trim() === "" ||
-        email.trim() === "" ||
-        password.trim() === ""
-      ) {
-        throw createHttpError(400, "All fields are required");
+      const requiredFieldsError = validateRequiredFields(req.body, [
+        "name",
+        "email",
+        "password",
+      ]);
+    
+      if (requiredFieldsError) {
+        throw createHttpError(400, requiredFieldsError);
       }
 
       // 2.1 - Validate email format
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(email)) {
+      if(!isValidEmail(email)){
         throw createHttpError(400, "Please provide a valid email address");
       }
 
       // 2.2 - Validate password strength
-      if (password.length < 6) {
-        throw createHttpError(
-          400,
-          "Password must be at least 6 characters long",
-        );
+      const passwordError = isValidPassword(password);
+      if (passwordError) {
+        throw createHttpError(400, passwordError);
       }
 
       // 3
@@ -59,14 +61,18 @@ authRouter.post(
         throw createHttpError(409, "User with this email already exists");
       }
 
+      // 4
+      const saltRounds = 10;
+      const hashedPassword = await bcrypt.hash(password, saltRounds);
+
       // 5
       const newUser = await prisma.user.create({
         // Store this `data` in the database
         data: {
           name,
           email,
-          password, // TODO : Hash the password
-          role: "user",
+          password: hashedPassword,
+          role: Roles.CUSTOMER, 
         },
         // `select` object is returned to the `newUser` variable
         select: {
@@ -75,6 +81,8 @@ authRouter.post(
           email: true,
         },
       });
+
+      logger.info(`New user registered: ${newUser.email}`);
 
       res.status(201).json({
         success: true,
